@@ -4,6 +4,10 @@
 
 A modern examination platform powered by AI for managing and conducting exams.
 
+## Code Owner
+- **Name**: Vidya
+- **Email**: vhkshk21@gmail.com
+
 ## Project Status
 
 | Feature | Status | Description |
