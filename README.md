@@ -1,3 +1,5 @@
+![AI Exam Platform Banner](/gitbanner.png)
+
 # AI Exam Platform
 
 A modern examination platform powered by AI for managing and conducting exams.
