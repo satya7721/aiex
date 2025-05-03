@@ -14,7 +14,7 @@ import {
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { LiveDateSelector } from './LiveDateSelector';
-import { CreateExamFormProps, CreateExamFormData } from '@/types/admin';
+import { CreateExamFormProps, CreateExamFormData } from '@/types';
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required'),

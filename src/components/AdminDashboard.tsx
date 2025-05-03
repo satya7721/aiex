@@ -26,7 +26,7 @@ import {
   DivisionSectionProps,
   BatchSectionProps,
   MonthSelectorProps
-} from '@/types/admin';
+} from '@/types';
 
 // Stats Card Component
 const StatsCard = ({ title, value, suffix = '' }: StatsCardProps) => (
@@ -133,11 +133,11 @@ export default function AdminDashboard({ exams, submissions }: AdminDashboardPro
   // Filter data based on selected month
   const filterDataByMonth = <T extends { [key: string]: any }>(data: T[], dateField: keyof T): T[] => {
     if (selectedMonth === 'all') return data;
-    
+
     const [year, month] = selectedMonth.split('-').map(Number);
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
-    
+
     return data.filter(item => {
       const itemDate = new Date(item[dateField] as string);
       return itemDate >= startDate && itemDate <= endDate;
@@ -161,7 +161,7 @@ export default function AdminDashboard({ exams, submissions }: AdminDashboardPro
   const examsByBatchAndDivision: ExamByBatchAndDivision = filteredExams.reduce((acc, exam) => {
     const batch = exam.class.toString();
     const division = exam.division || 'A';
-    
+
     if (!acc[batch]) {
       acc[batch] = {};
     }
@@ -186,14 +186,14 @@ export default function AdminDashboard({ exams, submissions }: AdminDashboardPro
           monthOptions={monthOptions}
         />
       </div>
-      
+
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <StatsCard title="Total Exams" value={stats.totalExams} />
         <StatsCard title="Total Questions" value={stats.totalQuestions} />
         <StatsCard title="Submissions" value={stats.totalSubmissions} />
         <StatsCard title="Avg. Score" value={stats.averageScore} suffix="%" />
       </div>
-      
+
       <div className="grid grid-cols-1 gap-4">
         <Card>
           <CardHeader className="p-4">

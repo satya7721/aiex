@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { exams, submissions } from '@/app/data';
-import { Exam, Submission } from '@/app/types';
+import { Exam, Submission } from '@/types';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import { ArrowLeft } from 'lucide-react';
 export default function ExamReportPage() {
   const params = useParams();
   const examId = params.examId as string;
-  
+
   const [exam, setExam] = useState<Exam | null>(null);
   const [examSubmissions, setExamSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ export default function ExamReportPage() {
     const timer = setTimeout(() => {
       const foundExam = exams.find(e => e.id === examId);
       const examSubs = submissions.filter(s => s.examId === examId);
-      
+
       setExam(foundExam || null);
       setExamSubmissions(examSubs);
       setLoading(false);
@@ -137,9 +137,9 @@ export default function ExamReportPage() {
               <div key={submission.id} className="border rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="font-medium">{submission.userName}</h3>
+                    <h3 className="font-medium">Student {submission.studentId}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Submitted on {new Date(submission.submittedAt).toLocaleDateString()}
+                      Submitted on {submission.submittedAt ? new Date(submission.submittedAt).toLocaleDateString() : 'Not submitted'}
                     </p>
                   </div>
                   <div className="text-right">

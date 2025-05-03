@@ -1,6 +1,6 @@
 'use client';
 
-import { Exam } from '@/types/exam';
+import { Exam } from '@/types';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,12 +40,12 @@ export default function AdminExamForm({ exam }: AdminExamFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
       // In a real app, this would send data to the backend
-      
+
       // Navigate to admin dashboard
       if (exam) {
         router.push(`/admin/exam/${exam.id}`);
@@ -75,7 +75,7 @@ export default function AdminExamForm({ exam }: AdminExamFormProps) {
               required
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="class" className="text-sm font-medium">
@@ -93,7 +93,7 @@ export default function AdminExamForm({ exam }: AdminExamFormProps) {
                 <option value="12">Class 12</option>
               </select>
             </div>
-            
+
             <div className="space-y-2">
               <label htmlFor="subject" className="text-sm font-medium">
                 Subject
@@ -143,7 +143,7 @@ export default function AdminExamForm({ exam }: AdminExamFormProps) {
               />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <label htmlFor="duration" className="text-sm font-medium">
               Duration (minutes)
@@ -160,11 +160,11 @@ export default function AdminExamForm({ exam }: AdminExamFormProps) {
             />
           </div>
         </CardContent>
-        
+
         <CardFooter className="flex justify-between mt-6">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => router.push('/admin')}
           >
             Cancel

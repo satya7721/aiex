@@ -1,6 +1,6 @@
 'use client';
 
-import { Exam } from '@/types/exam';
+import { Exam } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -30,20 +30,20 @@ interface ExamActionsProps {
 export default function ExamActions({ exam, onDelete, onDuplicate }: ExamActionsProps) {
   const router = useRouter();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  
+
   const handleDelete = () => {
     onDelete(exam.id);
     setIsDeleteDialogOpen(false);
   };
-  
+
   const handleDuplicate = () => {
     onDuplicate(exam);
   };
-  
+
   const handleEdit = () => {
     router.push(`/admin/exam/${exam.id}`);
   };
-  
+
   return (
     <div className="flex items-center">
       <div className="hidden sm:block mr-2">
@@ -51,7 +51,7 @@ export default function ExamActions({ exam, onDelete, onDuplicate }: ExamActions
           Edit
         </Button>
       </div>
-      
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="h-8 sm:h-9 px-2 sm:px-3">
@@ -74,7 +74,7 @@ export default function ExamActions({ exam, onDelete, onDuplicate }: ExamActions
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      
+
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="w-[90%] sm:w-auto max-w-md">
           <AlertDialogHeader>

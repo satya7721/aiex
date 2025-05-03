@@ -1,7 +1,7 @@
 'use client';
 
 import { exams, submissions } from '@/app/data';
-import { Exam } from '@/types/exam';
+import { Exam } from '@/types';
 import AdminDashboard from '@/components/AdminDashboard';
 import ExamActions from '@/components/ExamActions';
 import { Button } from '@/components/ui/button';
@@ -30,21 +30,21 @@ export default function AdminPage() {
   const [localExams, setLocalExams] = useState<Exam[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
-  
+
   // Simulate data loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setLocalExams(exams);
       setLoading(false);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   const handleDeleteExam = (examId: string) => {
     setLocalExams(prevExams => prevExams.filter(exam => exam.id !== examId));
   };
-  
+
   const handleDuplicateExam = (exam: Exam) => {
     const newExam: Exam = {
       ...exam,
@@ -52,17 +52,17 @@ export default function AdminPage() {
       title: `${exam.title} (Copy)`,
       createdAt: new Date().toISOString()
     };
-    
+
     setLocalExams(prevExams => [...prevExams, newExam]);
   };
-  
+
   const filteredExams = searchTerm
-    ? localExams.filter(exam => 
-        exam.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        exam.subject.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? localExams.filter(exam =>
+      exam.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      exam.subject.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : localExams;
-  
+
   const renderExamsTab = () => {
     if (loading) {
       return (
@@ -79,12 +79,12 @@ export default function AdminPage() {
         </div>
       );
     }
-    
+
     if (filteredExams.length === 0) {
       return (
         <div className="text-center py-12 border rounded-lg">
           <p className="text-muted-foreground mb-4">
-            {searchTerm 
+            {searchTerm
               ? 'No exams found matching your search.'
               : 'No exams have been created yet.'}
           </p>
@@ -96,7 +96,7 @@ export default function AdminPage() {
         </div>
       );
     }
-    
+
     return (
       <div className="space-y-4">
         {filteredExams.map((exam) => (
@@ -109,7 +109,7 @@ export default function AdminPage() {
                     Class {exam.class} • {exam.subject} • {exam.questions.length} questions
                   </CardDescription>
                 </div>
-                <ExamActions 
+                <ExamActions
                   exam={exam}
                   onDelete={handleDeleteExam}
                   onDuplicate={handleDuplicateExam}
@@ -121,7 +121,7 @@ export default function AdminPage() {
       </div>
     );
   };
-  
+
   // Get completed exams with submission counts
   const completedExams = exams.map(exam => {
     const examSubmissions = submissions.filter(sub => sub.examId === exam.id);
@@ -133,7 +133,7 @@ export default function AdminPage() {
         : 0
     };
   }).sort((a, b) => b.submissionCount - a.submissionCount);
-  
+
   return (
     <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-4">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 mb-6 sm:mb-8">
@@ -147,13 +147,13 @@ export default function AdminPage() {
           </Link>
         </div>
       </div>
-      
+
       {!loading && (
         <div className="mb-8">
           <AdminDashboard exams={localExams} submissions={submissions} />
         </div>
       )}
-      
+
       <Tabs defaultValue="exams" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="exams">Exams</TabsTrigger>
@@ -186,7 +186,7 @@ export default function AdminPage() {
           </div>
           {renderExamsTab()}
         </TabsContent>
-        
+
         <TabsContent value="submissions">
           <h2 className="text-lg sm:text-xl font-medium mb-4">Completed Exams</h2>
           <Card>

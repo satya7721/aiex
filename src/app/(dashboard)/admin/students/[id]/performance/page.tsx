@@ -13,7 +13,7 @@ import {
 import { ArrowLeft } from 'lucide-react';
 import { users } from '@/app/data';
 import { submissions } from '@/app/data';
-import { User } from '@/types/user';
+import { User } from '@/types';
 
 export default function StudentPerformancePage() {
   const params = useParams();
@@ -45,7 +45,7 @@ export default function StudentPerformancePage() {
 
   // Get student's submissions
   const studentSubmissions = submissions.filter(sub => sub.studentId === student.id);
-  
+
   // Calculate statistics
   const totalExams = studentSubmissions.length;
   const averageScore = totalExams > 0
@@ -128,11 +128,10 @@ export default function StudentPerformancePage() {
                       Submitted on {new Date(submission.submittedAt || '').toLocaleDateString()}
                     </p>
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    submission.score >= 80 ? 'bg-green-100 text-green-700' :
+                  <div className={`px-3 py-1 rounded-full text-sm font-medium ${submission.score >= 80 ? 'bg-green-100 text-green-700' :
                     submission.score >= 60 ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>
+                      'bg-red-100 text-red-700'
+                    }`}>
                     Score: {submission.score}%
                   </div>
                 </div>

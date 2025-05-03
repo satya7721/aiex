@@ -2,10 +2,11 @@
 
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import { Suspense } from 'react';
 import { StudentLoginForm } from '@/components/auth/StudentLoginForm';
 import { AdminLoginForm } from '@/components/auth/AdminLoginForm';
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const type = searchParams.get('type') || 'student';
 
@@ -34,5 +35,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 } 

@@ -1,5 +1,4 @@
-import { Submission } from '@/types/submission';
-import { User } from '@/types/user';
+import { Submission, User } from "@/types";
 
 /**
  * Calculate student performance metrics
@@ -12,24 +11,28 @@ export function calculateStudentPerformance(submissions: Submission[]) {
       highestScore: 0,
       lowestScore: 0,
       completionRate: 0,
-      examsTaken: []
+      examsTaken: [],
     };
   }
 
-  const scores = submissions.map(sub => sub.score);
-  const completedSubmissions = submissions.filter(sub => sub.status === 'completed');
+  const scores = submissions.map((sub) => sub.score);
+  const completedSubmissions = submissions.filter(
+    (sub) => sub.status === "completed"
+  );
 
   return {
     totalExams: submissions.length,
-    averageScore: Math.round(scores.reduce((a, b) => a + b, 0) / submissions.length),
+    averageScore: Math.round(
+      scores.reduce((a, b) => a + b, 0) / submissions.length
+    ),
     highestScore: Math.max(...scores),
     lowestScore: Math.min(...scores),
     completionRate: (completedSubmissions.length / submissions.length) * 100,
-    examsTaken: submissions.map(sub => ({
+    examsTaken: submissions.map((sub) => ({
       examId: sub.examId,
       score: sub.score,
-      submittedAt: sub.submittedAt
-    }))
+      submittedAt: sub.submittedAt,
+    })),
   };
 }
 
@@ -46,7 +49,7 @@ export function calculateClassPerformance(
       averageScore: 0,
       participationRate: 0,
       topPerformers: [],
-      needsImprovement: []
+      needsImprovement: [],
     };
   }
 
@@ -60,11 +63,13 @@ export function calculateClassPerformance(
   }, {} as { [key: string]: Submission[] });
 
   // Calculate average scores for each student
-  const studentAverages = students.map(student => {
+  const studentAverages = students.map((student) => {
     const studentSubs = submissionsByStudent[student.id] || [];
-    const avgScore = studentSubs.length > 0
-      ? studentSubs.reduce((sum, sub) => sum + sub.score, 0) / studentSubs.length
-      : 0;
+    const avgScore =
+      studentSubs.length > 0
+        ? studentSubs.reduce((sum, sub) => sum + sub.score, 0) /
+          studentSubs.length
+        : 0;
     return { student, avgScore };
   });
 
@@ -75,24 +80,28 @@ export function calculateClassPerformance(
     averageScore: Math.round(
       studentAverages.reduce((sum, s) => sum + s.avgScore, 0) / studentCount
     ),
-    participationRate: (Object.keys(submissionsByStudent).length / studentCount) * 100,
+    participationRate:
+      (Object.keys(submissionsByStudent).length / studentCount) * 100,
     topPerformers: studentAverages.slice(0, 5),
     needsImprovement: studentAverages
-      .filter(s => s.avgScore < 60)
-      .slice(0, 5)
+      .filter((s) => s.avgScore < 60)
+      .slice(0, 5),
   };
 }
 
 /**
  * Generate time-based analytics
  */
-export function generateTimeAnalytics(submissions: Submission[], period: 'day' | 'week' | 'month') {
+export function generateTimeAnalytics(
+  submissions: Submission[],
+  period: "day" | "week" | "month"
+) {
   const now = new Date();
   const timeRanges: { start: Date; end: Date }[] = [];
 
   // Create time ranges based on period
   switch (period) {
-    case 'day':
+    case "day":
       for (let i = 0; i < 24; i++) {
         const start = new Date(now);
         start.setHours(i, 0, 0, 0);
@@ -101,7 +110,7 @@ export function generateTimeAnalytics(submissions: Submission[], period: 'day' |
         timeRanges.push({ start, end });
       }
       break;
-    case 'week':
+    case "week":
       for (let i = 6; i >= 0; i--) {
         const start = new Date(now);
         start.setDate(start.getDate() - i);
@@ -111,7 +120,7 @@ export function generateTimeAnalytics(submissions: Submission[], period: 'day' |
         timeRanges.push({ start, end });
       }
       break;
-    case 'month':
+    case "month":
       for (let i = 29; i >= 0; i--) {
         const start = new Date(now);
         start.setDate(start.getDate() - i);
@@ -124,8 +133,8 @@ export function generateTimeAnalytics(submissions: Submission[], period: 'day' |
   }
 
   // Count submissions in each time range
-  return timeRanges.map(range => {
-    const rangeSubmissions = submissions.filter(sub => {
+  return timeRanges.map((range) => {
+    const rangeSubmissions = submissions.filter((sub) => {
       const subDate = new Date(sub.submittedAt || sub.startedAt);
       return subDate >= range.start && subDate <= range.end;
     });
@@ -134,9 +143,13 @@ export function generateTimeAnalytics(submissions: Submission[], period: 'day' |
       start: range.start,
       end: range.end,
       count: rangeSubmissions.length,
-      averageScore: rangeSubmissions.length > 0
-        ? Math.round(rangeSubmissions.reduce((sum, sub) => sum + sub.score, 0) / rangeSubmissions.length)
-        : 0
+      averageScore:
+        rangeSubmissions.length > 0
+          ? Math.round(
+              rangeSubmissions.reduce((sum, sub) => sum + sub.score, 0) /
+                rangeSubmissions.length
+            )
+          : 0,
     };
   });
 }
@@ -147,34 +160,46 @@ export function generateTimeAnalytics(submissions: Submission[], period: 'day' |
 export function calculateImprovementMetrics(submissions: Submission[]) {
   if (submissions.length < 2) {
     return {
-      trend: 'neutral',
+      trend: "neutral",
       improvement: 0,
-      consistencyScore: 0
+      consistencyScore: 0,
     };
   }
 
   // Sort submissions by date
   const sortedSubs = [...submissions].sort(
-    (a, b) => new Date(a.submittedAt || a.startedAt).getTime() - 
-              new Date(b.submittedAt || b.startedAt).getTime()
+    (a, b) =>
+      new Date(a.submittedAt || a.startedAt).getTime() -
+      new Date(b.submittedAt || b.startedAt).getTime()
   );
 
   // Calculate score differences
   const scoreDiffs = [];
   for (let i = 1; i < sortedSubs.length; i++) {
-    scoreDiffs.push(sortedSubs[i].score - sortedSubs[i-1].score);
+    scoreDiffs.push(sortedSubs[i].score - sortedSubs[i - 1].score);
   }
 
-  const averageImprovement = scoreDiffs.reduce((sum, diff) => sum + diff, 0) / scoreDiffs.length;
-  
+  const averageImprovement =
+    scoreDiffs.reduce((sum, diff) => sum + diff, 0) / scoreDiffs.length;
+
   // Calculate consistency score (inverse of standard deviation)
-  const meanScore = sortedSubs.reduce((sum, sub) => sum + sub.score, 0) / sortedSubs.length;
-  const variance = sortedSubs.reduce((sum, sub) => sum + Math.pow(sub.score - meanScore, 2), 0) / sortedSubs.length;
+  const meanScore =
+    sortedSubs.reduce((sum, sub) => sum + sub.score, 0) / sortedSubs.length;
+  const variance =
+    sortedSubs.reduce(
+      (sum, sub) => sum + Math.pow(sub.score - meanScore, 2),
+      0
+    ) / sortedSubs.length;
   const consistencyScore = Math.max(0, 100 - Math.sqrt(variance));
 
   return {
-    trend: averageImprovement > 1 ? 'improving' : averageImprovement < -1 ? 'declining' : 'stable',
+    trend:
+      averageImprovement > 1
+        ? "improving"
+        : averageImprovement < -1
+        ? "declining"
+        : "stable",
     improvement: Math.round(averageImprovement * 10) / 10,
-    consistencyScore: Math.round(consistencyScore)
+    consistencyScore: Math.round(consistencyScore),
   };
-} 
+}

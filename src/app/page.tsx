@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { NavigationButtons } from '@/components/navigation-buttons';
 
 export default function Home() {
   return (
@@ -31,21 +31,7 @@ export default function Home() {
           <div className="flex items-center space-x-2">
             <span className="text-xl font-bold">AIEx</span>
           </div>
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              className="hover:bg-gray-800/30 transition-colors duration-200"
-              asChild
-            >
-              <Link href="/login?type=admin" className="text-gray-300 hover:text-white">Log in</Link>
-            </Button>
-            <Button 
-              className="bg-gray-800/30 hover:bg-gray-700/50 transition-all duration-200 hover:scale-105"
-              asChild
-            >
-              <Link href="/login?type=student">Sign up</Link>
-            </Button>
-          </div>
+          <NavigationButtons />
         </nav>
 
         <div className="max-w-6xl mx-auto px-4 py-20">
@@ -64,21 +50,12 @@ export default function Home() {
               Experience the next generation of examination platform powered by artificial intelligence
             </p>
             <div className="flex justify-center gap-4 pt-4">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20" 
-                asChild
-              >
-                <Link href="/login?type=student">Start as Student</Link>
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-gray-700 bg-gray-900/50 text-gray-300 hover:bg-gray-800/30 hover:text-white transition-all duration-200 hover:scale-105 hover:border-purple-500/50" 
-                asChild
-              >
-                <Link href="/login?type=admin">Login as Admin</Link>
-              </Button>
+              <Link href="/login?type=student" className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 h-10 rounded-md px-6">
+                Start as Student
+              </Link>
+              <Link href="/login?type=admin" className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-lg border-gray-700 bg-gray-900/50 text-gray-300 hover:bg-gray-800/30 hover:text-white transition-all duration-200 hover:scale-105 hover:border-purple-500/50 h-10 rounded-md px-6">
+                Login as Admin
+              </Link>
             </div>
           </div>
 

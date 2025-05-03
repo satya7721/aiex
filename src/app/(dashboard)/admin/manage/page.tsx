@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { users } from '@/app/data';
-import { User } from '@/types/user';
+import { User } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -24,7 +24,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { BarChart3 } from 'lucide-react';
 
-export default function ManagePage() {
+function ManageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [students, setStudents] = useState<User[]>(
@@ -42,7 +42,7 @@ export default function ManagePage() {
 
   const handleToggleActive = (student: User) => {
     // In a real app, this would be an API call
-    const updatedStudents = students.map(s => 
+    const updatedStudents = students.map(s =>
       s.id === student.id ? { ...s, active: !s.active } : s
     );
     setStudents(updatedStudents);
@@ -57,8 +57,8 @@ export default function ManagePage() {
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Manage Students</h1>
-        <Button 
-          variant="default" 
+        <Button
+          variant="default"
           className="bg-black text-white hover:bg-black/90"
           onClick={handleAddClick}
         >
@@ -101,16 +101,15 @@ export default function ManagePage() {
                   <TableCell>Class {student.class}</TableCell>
                   <TableCell>Division {student.division}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      student.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                    }`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${student.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      }`}>
                       {student.active ? 'Active' : 'Inactive'}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleEditClick(student)}
                         className="text-muted-foreground hover:text-foreground"
@@ -144,5 +143,13 @@ export default function ManagePage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function ManagePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ManageContent />
+    </Suspense>
   );
 } 
