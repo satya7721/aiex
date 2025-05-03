@@ -4,21 +4,21 @@ import { exams } from '@/app/data';
 import ExamForm from '@/components/ExamForm';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Exam } from '@/app/types';
+import { Exam } from '@/types';
 
 export default function ExamPage() {
   const { id } = useParams();
   const [exam, setExam] = useState<Exam | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  
+
   useEffect(() => {
     // Simulate API fetch
     const fetchExam = async () => {
       try {
         // In a real app, this would be an API call
         const foundExam = exams.find(e => e.id === id);
-        
+
         if (foundExam) {
           setExam(foundExam);
         } else {
@@ -30,14 +30,14 @@ export default function ExamPage() {
         setLoading(false);
       }
     };
-    
+
     const timer = setTimeout(() => {
       fetchExam();
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, [id]);
-  
+
   if (loading) {
     return (
       <div className="container max-w-4xl mx-auto py-8 px-4">
@@ -46,12 +46,12 @@ export default function ExamPage() {
             <div className="h-8 bg-muted rounded animate-pulse w-64"></div>
             <div className="h-8 bg-muted rounded animate-pulse w-32"></div>
           </div>
-          
+
           <div className="h-4 bg-muted rounded animate-pulse w-48"></div>
-          
+
           <div className="border rounded-lg p-8 space-y-6">
             <div className="h-6 bg-muted rounded animate-pulse w-3/4"></div>
-            
+
             <div className="space-y-4 mt-6">
               {Array.from({ length: 4 }).map((_, index) => (
                 <div key={index} className="flex items-center space-x-2">
@@ -61,7 +61,7 @@ export default function ExamPage() {
               ))}
             </div>
           </div>
-          
+
           <div className="flex justify-between">
             <div className="h-10 bg-muted rounded animate-pulse w-28"></div>
             <div className="h-10 bg-muted rounded animate-pulse w-28"></div>
@@ -70,7 +70,7 @@ export default function ExamPage() {
       </div>
     );
   }
-  
+
   if (error || !exam) {
     return (
       <div className="container max-w-4xl mx-auto py-8 px-4 text-center">
@@ -84,7 +84,7 @@ export default function ExamPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <ExamForm exam={exam} />

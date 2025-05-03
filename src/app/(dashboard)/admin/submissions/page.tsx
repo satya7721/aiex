@@ -11,16 +11,16 @@ import { useState, useEffect } from 'react';
 
 export default function AdminSubmissionsPage() {
   const [loading, setLoading] = useState(true);
-  
+
   // Simulate data loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1000);
-    
+
     return () => clearTimeout(timer);
   }, []);
-  
+
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <div className="flex justify-between items-center mb-8">
@@ -29,7 +29,7 @@ export default function AdminSubmissionsPage() {
           <Button variant="outline">Back to Admin</Button>
         </Link>
       </div>
-      
+
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -78,28 +78,27 @@ export default function AdminSubmissionsPage() {
                   </div>
                 </div>
               </div>
-              
+
               {submissions.map((submission) => (
                 <Card key={submission.id}>
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h3 className="font-medium">{submission.userName}</h3>
+                        <h3 className="font-medium">Student {submission.studentId}</h3>
                         <p className="text-sm text-muted-foreground">{submission.examTitle}</p>
                       </div>
                       {submission.feedback && (
-                        <div className={`text-sm font-medium px-2 py-1 rounded ${
-                          submission.feedback.score >= 80 ? 'bg-green-100 text-green-700' : 
-                          submission.feedback.score >= 60 ? 'bg-yellow-100 text-yellow-700' : 
-                          'bg-red-100 text-red-700'
-                        }`}>
+                        <div className={`text-sm font-medium px-2 py-1 rounded ${submission.feedback.score >= 80 ? 'bg-green-100 text-green-700' :
+                          submission.feedback.score >= 60 ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
                           Score: {submission.feedback.score}%
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex justify-between mt-2 text-xs">
-                      <span>Submitted: {new Date(submission.submittedAt).toLocaleString()}</span>
+                      <span>Submitted: {submission.submittedAt ? new Date(submission.submittedAt).toLocaleString() : 'Not submitted'}</span>
                       <div className="space-x-2">
                         <Link href={`/report/${submission.id}`} className="text-primary hover:underline">
                           View Report
@@ -113,7 +112,7 @@ export default function AdminSubmissionsPage() {
                   </CardContent>
                 </Card>
               ))}
-              
+
               <div className="flex justify-center mt-8">
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm" disabled>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Question } from '@/types/exam';
+import { Question } from '@/types';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -51,10 +51,10 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
 
   const handleRemoveOption = (index: number) => {
     if (options.length <= 2) return; // Need at least 2 options
-    
+
     const newOptions = options.filter((_, i) => i !== index);
     setOptions(newOptions);
-    
+
     // Adjust correctOption if needed
     if (correctOption === index) {
       setCorrectOption(0);
@@ -74,7 +74,7 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
         correctOption
       })
     };
-    
+
     onSave(newQuestion);
   };
 
@@ -90,7 +90,7 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
           )}
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {!isEditing && (
           <div className="space-y-2">
@@ -115,7 +115,7 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
             </div>
           </div>
         )}
-        
+
         <div className="space-y-2">
           <label htmlFor="questionText" className="text-sm font-medium">
             Question Text
@@ -129,21 +129,21 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
             required
           />
         </div>
-        
+
         {questionType === 'mcq' && (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <label className="text-sm font-medium">Answer Options</label>
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 size="sm"
                 onClick={handleAddOption}
               >
                 Add Option
               </Button>
             </div>
-            
+
             {options.map((option, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <Input
@@ -159,9 +159,9 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
                   className="flex-grow"
                 />
                 {options.length > 2 && (
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
+                  <Button
+                    type="button"
+                    variant="ghost"
                     size="sm"
                     onClick={() => handleRemoveOption(index)}
                   >
@@ -176,22 +176,22 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
           </div>
         )}
       </CardContent>
-      
+
       <CardFooter className="flex justify-between">
         <div>
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={onCancel}
           >
             Cancel
           </Button>
-          
+
           {isEditing && (
             <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
               <AlertDialogTrigger asChild>
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   variant="destructive"
                   className="ml-2"
                 >
@@ -215,9 +215,9 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
             </AlertDialog>
           )}
         </div>
-        
-        <Button 
-          type="button" 
+
+        <Button
+          type="button"
           onClick={handleSave}
           disabled={!questionText || (questionType === 'mcq' && options.some(opt => !opt))}
         >

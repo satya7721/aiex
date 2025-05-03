@@ -1,12 +1,11 @@
 'use client';
 
-import { Exam, Question } from '@/types/exam';
-import { Answer } from '@/types/submission';
+import { Exam, Question, Answer } from '@/types';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -61,7 +60,7 @@ export default function ExamForm({ exam }: ExamFormProps) {
     // Simulate API call to submit exam
     // In a real app, this would send data to the backend
     const submissionId = `sub-${Date.now()}`;
-    
+
     // Navigate to the report page
     router.push(`/report/${submissionId}`);
   };
@@ -73,7 +72,7 @@ export default function ExamForm({ exam }: ExamFormProps) {
 
   const currentQuestion = exam.questions[currentQuestionIndex];
   const totalQuestions = exam.questions.length;
-  
+
   const getCurrentAnswer = (questionId: string) => {
     return answers.find(a => a.questionId === questionId)?.answer;
   };
@@ -84,15 +83,15 @@ export default function ExamForm({ exam }: ExamFormProps) {
         <h1 className="text-2xl font-bold">{exam.title}</h1>
         <Timer durationMinutes={exam.duration} onTimeEnd={handleTimeEnd} />
       </div>
-      
+
       <div className="flex justify-between text-sm mb-4">
         <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
         <span>{currentQuestion.type === 'mcq' ? 'Multiple Choice' : 'Subjective'}</span>
       </div>
-      
+
       <div className="bg-card border rounded-lg p-6">
         <h2 className="text-xl font-medium mb-6">{currentQuestion.text}</h2>
-        
+
         {currentQuestion.type === 'mcq' && currentQuestion.options && (
           <div className="space-y-4">
             {currentQuestion.options.map((option, index) => (
@@ -110,7 +109,7 @@ export default function ExamForm({ exam }: ExamFormProps) {
             ))}
           </div>
         )}
-        
+
         {currentQuestion.type === 'subjective' && (
           <Textarea
             placeholder="Write your answer here..."
@@ -120,7 +119,7 @@ export default function ExamForm({ exam }: ExamFormProps) {
           />
         )}
       </div>
-      
+
       <div className="flex justify-between">
         <Button
           variant="outline"
@@ -129,9 +128,9 @@ export default function ExamForm({ exam }: ExamFormProps) {
         >
           Previous
         </Button>
-        
+
         {currentQuestionIndex < totalQuestions - 1 ? (
-          <Button 
+          <Button
             onClick={() => setCurrentQuestionIndex(prev => Math.min(totalQuestions - 1, prev + 1))}
           >
             Next
@@ -147,7 +146,7 @@ export default function ExamForm({ exam }: ExamFormProps) {
                   {isTimeUp ? "Time's up!" : "Submit Exam"}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {isTimeUp 
+                  {isTimeUp
                     ? "Your time is up. Your answers will be submitted now."
                     : "Are you sure you want to submit your exam? You won't be able to change your answers after submission."}
                 </AlertDialogDescription>
@@ -164,7 +163,7 @@ export default function ExamForm({ exam }: ExamFormProps) {
           </AlertDialog>
         )}
       </div>
-      
+
       <div className="flex justify-center mt-8">
         <div className="flex space-x-2">
           {Array.from({ length: totalQuestions }).map((_, index) => {

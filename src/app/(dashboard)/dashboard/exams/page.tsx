@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { exams } from '@/app/data';
-import { Exam } from '@/types/exam';
+import { Exam } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -13,7 +13,7 @@ export default function StudentExamsPage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-8">Available Exams</h1>
-      
+
       <div className="grid gap-4">
         {availableExams.length === 0 ? (
           <Card>

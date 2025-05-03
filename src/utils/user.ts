@@ -1,4 +1,4 @@
-import { User } from '@/types/user';
+import { User } from "@/types";
 
 /**
  * Validate email format
@@ -13,11 +13,11 @@ export function isValidEmail(email: string): boolean {
  */
 export function groupStudentsByClass(students: User[]) {
   return students.reduce((acc, student) => {
-    if (student.type !== 'student') return acc;
-    
-    const batch = student.class || '12';
-    const division = student.division || 'A';
-    
+    if (student.type !== "student") return acc;
+
+    const batch = student.class || "12";
+    const division = student.division || "A";
+
     if (!acc[batch]) {
       acc[batch] = {};
     }
@@ -32,9 +32,12 @@ export function groupStudentsByClass(students: User[]) {
 /**
  * Filter students by active status
  */
-export function filterStudentsByStatus(students: User[], active: boolean): User[] {
-  return students.filter(student => 
-    student.type === 'student' && student.active === active
+export function filterStudentsByStatus(
+  students: User[],
+  active: boolean
+): User[] {
+  return students.filter(
+    (student) => student.type === "student" && student.active === active
   );
 }
 
@@ -43,10 +46,11 @@ export function filterStudentsByStatus(students: User[], active: boolean): User[
  */
 export function searchStudents(students: User[], searchTerm: string): User[] {
   const term = searchTerm.toLowerCase();
-  return students.filter(student =>
-    student.type === 'student' &&
-    (student.name.toLowerCase().includes(term) ||
-     student.email.toLowerCase().includes(term))
+  return students.filter(
+    (student) =>
+      student.type === "student" &&
+      (student.name.toLowerCase().includes(term) ||
+        student.email.toLowerCase().includes(term))
   );
 }
 
@@ -55,36 +59,39 @@ export function searchStudents(students: User[], searchTerm: string): User[] {
  */
 export function getClassAndDivisionOptions() {
   return {
-    classes: ['11', '12'],
-    divisions: ['A', 'B', 'C']
+    classes: ["11", "12"],
+    divisions: ["A", "B", "C"],
   };
 }
 
 /**
  * Validate student data
  */
-export function validateStudentData(data: Partial<User>): { isValid: boolean; errors: string[] } {
+export function validateStudentData(data: Partial<User>): {
+  isValid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!data.name || data.name.trim().length < 2) {
-    errors.push('Name must be at least 2 characters long');
+    errors.push("Name must be at least 2 characters long");
   }
 
   if (!data.email || !isValidEmail(data.email)) {
-    errors.push('Invalid email address');
+    errors.push("Invalid email address");
   }
 
-  if (!data.class || !['11', '12'].includes(data.class)) {
-    errors.push('Invalid class selection');
+  if (!data.class || !["11", "12"].includes(data.class)) {
+    errors.push("Invalid class selection");
   }
 
-  if (!data.division || !['A', 'B', 'C'].includes(data.division)) {
-    errors.push('Invalid division selection');
+  if (!data.division || !["A", "B", "C"].includes(data.division)) {
+    errors.push("Invalid division selection");
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -93,22 +100,22 @@ export function validateStudentData(data: Partial<User>): { isValid: boolean; er
  */
 export function sortStudents(
   students: User[],
-  sortBy: 'name' | 'class' | 'division' | 'status' = 'name',
+  sortBy: "name" | "class" | "division" | "status" = "name",
   ascending = true
 ): User[] {
   return [...students].sort((a, b) => {
     let comparison = 0;
     switch (sortBy) {
-      case 'name':
+      case "name":
         comparison = a.name.localeCompare(b.name);
         break;
-      case 'class':
-        comparison = (a.class || '').localeCompare(b.class || '');
+      case "class":
+        comparison = (a.class || "").localeCompare(b.class || "");
         break;
-      case 'division':
-        comparison = (a.division || '').localeCompare(b.division || '');
+      case "division":
+        comparison = (a.division || "").localeCompare(b.division || "");
         break;
-      case 'status':
+      case "status":
         comparison = Number(a.active) - Number(b.active);
         break;
     }
@@ -120,11 +127,11 @@ export function sortStudents(
  * Get student statistics
  */
 export function getStudentStatistics(students: User[]) {
-  const activeStudents = students.filter(s => s.active).length;
+  const activeStudents = students.filter((s) => s.active).length;
   const totalStudents = students.length;
-  
+
   const classCounts = students.reduce((acc, student) => {
-    const batch = student.class || '12';
+    const batch = student.class || "12";
     acc[batch] = (acc[batch] || 0) + 1;
     return acc;
   }, {} as { [key: string]: number });
@@ -134,6 +141,6 @@ export function getStudentStatistics(students: User[]) {
     activeStudents,
     inactiveStudents: totalStudents - activeStudents,
     activeRate: totalStudents > 0 ? (activeStudents / totalStudents) * 100 : 0,
-    classCounts
+    classCounts,
   };
-} 
+}

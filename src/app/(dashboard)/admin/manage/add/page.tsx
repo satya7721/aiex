@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,10 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { User } from '@/types/user';
+import { User } from '@/types';
 import { users } from '@/app/data';
 
-export default function AddStudentPage() {
+function AddStudentForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isEdit = searchParams.get('edit') === 'true';
@@ -115,9 +115,9 @@ export default function AddStudentPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => router.back()}
             >
               Cancel
@@ -129,5 +129,13 @@ export default function AddStudentPage() {
         </form>
       </Card>
     </div>
+  );
+}
+
+export default function AddStudentPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AddStudentForm />
+    </Suspense>
   );
 } 

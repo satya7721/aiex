@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { submissions } from '@/app/data';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Submission } from '@/types/submission';
+import { Submission } from '@/types';
 
 export default function StudentReportsPage() {
   const [mySubmissions] = useState<Submission[]>(submissions);
@@ -11,7 +11,7 @@ export default function StudentReportsPage() {
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-8">My Reports</h1>
-      
+
       <div className="grid gap-4">
         {mySubmissions.length === 0 ? (
           <Card>
@@ -25,7 +25,7 @@ export default function StudentReportsPage() {
               <CardHeader>
                 <CardTitle>{submission.examTitle}</CardTitle>
                 <CardDescription>
-                  {submission.submittedAt && 
+                  {submission.submittedAt &&
                     `Submitted on ${new Date(submission.submittedAt).toLocaleDateString()}`
                   }
                 </CardDescription>

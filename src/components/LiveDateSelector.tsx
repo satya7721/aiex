@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { LiveDateSelectorProps } from "@/types/admin";
+import { LiveDateSelectorProps } from "@/types";
 
 export function LiveDateSelector({ value, onChange, disabled }: LiveDateSelectorProps) {
   return (
