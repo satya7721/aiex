@@ -1,43 +1,62 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function AdminLoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     // Validate email format
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address');
+      setError("Please enter a valid email address");
       setIsLoading(false);
       return;
     }
 
     // Validate password
     if (!password) {
-      setError('Please enter your password');
+      setError("Please enter your password");
       setIsLoading(false);
       return;
     }
 
     try {
-      localStorage.setItem('userType', 'admin');
-      document.cookie = `userType=admin; path=/`;
-      router.push('/admin');
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          type: "admin",
+          email: email.toLowerCase(),
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data?.error ?? "Unable to sign in");
+        return;
+      }
+
+      router.push("/admin");
     } catch (err) {
-      setError('Invalid email or password');
+      console.error(err);
+      setError("Unable to sign in. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -52,7 +71,9 @@ export function AdminLoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+          <Label htmlFor="email" className="text-sm font-medium">
+            Email
+          </Label>
           <Input
             id="email"
             type="email"
@@ -65,7 +86,9 @@ export function AdminLoginForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+          <Label htmlFor="password" className="text-sm font-medium">
+            Password
+          </Label>
           <Input
             id="password"
             type="password"
@@ -81,12 +104,12 @@ export function AdminLoginForm() {
           <p className="text-sm text-red-500">{error}</p>
         )}
 
-        <Button 
-          type="submit" 
-          className="w-full bg-gray-900 text-white hover:bg-gray-800" 
+        <Button
+          type="submit"
+          className="w-full bg-gray-900 text-white hover:bg-gray-800"
           disabled={isLoading}
         >
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? "Signing in..." : "Sign in"}
         </Button>
       </form>
     </div>

@@ -9,6 +9,7 @@ import Link from 'next/link';
 
 export default function StudentExamsPage() {
   const [availableExams] = useState<Exam[]>(exams);
+  const getDuration = (exam: Exam) => exam.durationMinutes ?? exam.duration;
 
   return (
     <div className="container max-w-4xl mx-auto py-8 px-4">
@@ -31,7 +32,7 @@ export default function StudentExamsPage() {
                     <CardDescription className="mt-2">
                       {exam.subject} • Class {exam.class}
                       <div className="mt-1">
-                        Duration: {exam.duration} minutes • Questions: {exam.questions.length}
+                        Duration: {getDuration(exam)} minutes • Questions: {exam.questions.length}
                       </div>
                     </CardDescription>
                   </div>

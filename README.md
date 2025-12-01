@@ -58,6 +58,12 @@ A modern examination platform powered by AI for managing and conducting exams.
    npm run dev
    ```
 4. Open [http://localhost:3000](http://localhost:3000)
+5. Set the required environment variables in `.env.local`:
+   ```
+   SUPABASE_URL=<your-supabase-project-url>
+   SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+   ```
+   The service role key is used server-side to manage custom authentication and should never be exposed on the client.
 
 ## Project Structure
 

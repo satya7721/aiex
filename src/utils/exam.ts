@@ -25,8 +25,8 @@ export function calculateExamStatistics(submissions: Submission[]) {
   }
 
   const scores = submissions.map((sub) => sub.score);
-  const completedSubmissions = submissions.filter(
-    (sub) => sub.status === "completed"
+  const completedSubmissions = submissions.filter((sub) =>
+    ["completed", "submitted", "graded"].includes(sub.status)
   );
 
   // Calculate completion times in minutes

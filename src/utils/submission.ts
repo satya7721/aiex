@@ -13,11 +13,15 @@ export function calculateSubmissionScore(
 
     // For MCQ questions
     if (question.type === "mcq") {
+      const correct = question.correctOption;
+      if (correct === undefined || correct === null) return total;
+      const answerValue = answer.answer;
+      const isCorrect =
+        typeof correct === "string"
+          ? String(answerValue) === correct
+          : Number(answerValue) === Number(correct);
       return (
-        total +
-        (Number(answer.answer) === Number(question.correctOption)
-          ? question.marks
-          : 0)
+        total + (isCorrect ? question.marks : 0)
       );
     }
 

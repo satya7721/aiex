@@ -50,7 +50,9 @@ export default function AdminPage() {
       ...exam,
       id: `exam-${Date.now()}`,
       title: `${exam.title} (Copy)`,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: "draft"
     };
 
     setLocalExams(prevExams => [...prevExams, newExam]);

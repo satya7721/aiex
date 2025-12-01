@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -11,51 +11,72 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
 interface LoginFormProps {
-  userType: 'admin' | 'student';
+  userType: "admin" | "student";
   onSuccess?: () => void;
 }
 
 export default function LoginForm({ userType, onSuccess }: LoginFormProps) {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    setError(''); // Clear error when user types
+    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
+
+    if (!formData.email || !formData.password) {
+      setError("Please enter your email and password");
+      setLoading(false);
+      return;
+    }
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          type: userType,
+          email: formData.email.toLowerCase(),
+          password: formData.password,
+        }),
+      });
 
-      // Set user type in both localStorage and cookies
-      localStorage.setItem('userType', userType);
-      document.cookie = `userType=${userType}; path=/`;
+      const data = await response.json();
 
-      if (userType === 'admin') {
-        router.push('/admin');
+      if (!response.ok) {
+        setError(data?.error ?? "Unable to sign in");
+        return;
+      }
+
+      if (userType === "admin") {
+        router.push("/admin");
       } else {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
       onSuccess?.();
     } catch (err) {
-      console.error('Login error:', err);
+      console.error("Login error:", err);
+      setError("Unable to sign in right now");
     } finally {
       setLoading(false);
     }
@@ -64,11 +85,13 @@ export default function LoginForm({ userType, onSuccess }: LoginFormProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>{userType === 'admin' ? 'Admin Login' : 'Student Login'}</CardTitle>
+        <CardTitle>
+          {userType === "admin" ? "Admin Login" : "Student Login"}
+        </CardTitle>
         <CardDescription>
-          {userType === 'admin' 
-            ? 'Login to access the admin dashboard'
-            : 'Login to access your exams'}
+          {userType === "admin"
+            ? "Login to access the admin dashboard"
+            : "Login to access your exams"}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -83,7 +106,11 @@ export default function LoginForm({ userType, onSuccess }: LoginFormProps) {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder={userType === 'admin' ? 'admin@example.com' : 'student@student.com'}
+              placeholder={
+                userType === "admin"
+                  ? "admin@example.com"
+                  : "student@student.com"
+              }
               required
             />
           </div>
@@ -111,16 +138,16 @@ export default function LoginForm({ userType, onSuccess }: LoginFormProps) {
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4">
-          <Button 
-            type="submit" 
-            className="w-full mt-4" 
+          <Button
+            type="submit"
+            className="w-full mt-4"
             disabled={loading}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </Button>
-          {userType === 'student' && (
+          {userType === "student" && (
             <p className="text-sm text-muted-foreground text-center">
-              Don't have an account? Contact your administrator
+              Don&apos;t have an account? Contact your administrator
             </p>
           )}
         </CardFooter>

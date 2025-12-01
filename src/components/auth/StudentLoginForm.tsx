@@ -1,35 +1,55 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function StudentLoginForm() {
   const router = useRouter();
-  const [studentId, setStudentId] = useState('');
-  const [error, setError] = useState('');
+  const [studentId, setStudentId] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
-    // Validate student ID format (4 digits)
-    if (!studentId || !/^\d{4}$/.test(studentId)) {
-      setError('Please enter a valid 4-digit student ID');
+    const sanitizedId = studentId.trim().toUpperCase();
+
+    // Validate student ID format (4-12 alphanumeric)
+    if (!sanitizedId || !/^[A-Z0-9]{4,12}$/.test(sanitizedId)) {
+      setError("Please enter a valid 4-12 character student ID");
       setIsLoading(false);
       return;
     }
 
     try {
-      localStorage.setItem('userType', 'student');
-      document.cookie = `userType=student; path=/`;
-      router.push('/dashboard/exams');
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          type: "student",
+          studentId: sanitizedId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data?.error ?? "Unable to sign in");
+        return;
+      }
+
+      router.push("/dashboard/exams");
     } catch (err) {
-      setError('Invalid student ID');
+      console.error(err);
+      setError("Unable to sign in. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -44,17 +64,19 @@ export function StudentLoginForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="studentId" className="text-sm font-medium">Student ID</Label>
+          <Label htmlFor="studentId" className="text-sm font-medium">
+            Student ID
+          </Label>
           <Input
             id="studentId"
             type="text"
-            placeholder="Enter your 4-digit ID"
+            placeholder="Enter your ID"
             value={studentId}
             onChange={(e) => setStudentId(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
             required
-            maxLength={4}
-            pattern="\d{4}"
+            maxLength={12}
+            pattern="[A-Za-z0-9]{4,12}"
           />
         </div>
 
@@ -62,12 +84,12 @@ export function StudentLoginForm() {
           <p className="text-sm text-red-500">{error}</p>
         )}
 
-        <Button 
-          type="submit" 
-          className="w-full bg-gray-900 text-white hover:bg-gray-800" 
+        <Button
+          type="submit"
+          className="w-full bg-gray-900 text-white hover:bg-gray-800"
           disabled={isLoading}
         >
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? "Signing in..." : "Sign in"}
         </Button>
       </form>
     </div>

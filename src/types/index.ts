@@ -9,15 +9,27 @@ export interface User {
   class?: string;
   division?: string;
   active?: boolean;
+  studentId?: string;
+  roles?: string[];
+  lastLoginAt?: string;
+  metadata?: Record<string, any>;
 }
 
 // Exam Types
+export interface QuestionOption {
+  id: string;
+  text: string;
+}
+
 export interface Question {
   id: string;
   text: string;
   type: "mcq" | "subjective";
-  options?: string[];
-  correctOption?: number;
+  // MCQ options; supports schema-aligned objects while allowing legacy string arrays
+  options?: (QuestionOption | string)[];
+  // For MCQ, reference option id (or legacy index as number/string)
+  correctOption?: string | number;
+  modelAnswer?: string;
   marks: number;
 }
 
@@ -28,7 +40,15 @@ export interface Exam {
   class: string;
   division: string;
   duration: number;
+  durationMinutes?: number; // schema-aligned alias
   totalMarks: number;
+  status?: "draft" | "published" | "archived";
+  liveWindow?: {
+    startAt?: string;
+    endAt?: string;
+  };
+  tags?: string[];
+  createdBy?: string;
   questions: Question[];
   createdAt: string;
   updatedAt: string;
@@ -51,15 +71,18 @@ export interface Submission {
   answers: Answer[];
   score: number;
   totalMarks: number;
-  status: "pending" | "completed";
+  status: "pending" | "completed" | "in_progress" | "submitted" | "graded";
   startedAt: string;
   submittedAt?: string;
+  gradedAt?: string;
+  durationSeconds?: number;
   feedback?: {
     score: number;
     comments: string;
     actionItems: string[];
   };
   actionItems?: string[];
+  flags?: Record<string, boolean>;
 }
 
 // Admin Types

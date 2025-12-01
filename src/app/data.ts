@@ -25,7 +25,8 @@ export const exams: Exam[] = [
     createdAt: "2024-03-15T10:00:00Z",
     updatedAt: "2024-03-15T10:00:00Z",
     duration: 60,
-    totalMarks: 100,
+    totalMarks: 20,
+    status: "published",
   },
   {
     id: "exam-2",
@@ -44,7 +45,8 @@ export const exams: Exam[] = [
     createdAt: "2024-03-16T10:00:00Z",
     updatedAt: "2024-03-16T10:00:00Z",
     duration: 90,
-    totalMarks: 50,
+    totalMarks: 10,
+    status: "published",
   },
   {
     id: "exam-3",
@@ -63,7 +65,8 @@ export const exams: Exam[] = [
     createdAt: "2024-03-17T10:00:00Z",
     updatedAt: "2024-03-17T10:00:00Z",
     duration: 45,
-    totalMarks: 25,
+    totalMarks: 10,
+    status: "published",
   },
   {
     id: "exam-4",
@@ -82,7 +85,8 @@ export const exams: Exam[] = [
     createdAt: "2024-03-18T10:00:00Z",
     updatedAt: "2024-03-18T10:00:00Z",
     duration: 30,
-    totalMarks: 20,
+    totalMarks: 10,
+    status: "published",
   },
 ];
 
@@ -93,6 +97,7 @@ export const users: User[] = [
     name: "John Doe",
     email: "john@example.com",
     type: "student",
+    studentId: "1001",
     class: "11",
     division: "A",
   },
@@ -101,6 +106,7 @@ export const users: User[] = [
     name: "Jane Smith",
     email: "jane@example.com",
     type: "student",
+    studentId: "1002",
     class: "11",
     division: "B",
   },

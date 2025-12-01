@@ -16,6 +16,7 @@ interface ExamCardProps {
 }
 
 export default function ExamCard({ exam }: ExamCardProps) {
+  const duration = exam.durationMinutes ?? exam.duration;
   return (
     <Card className="w-full hover:shadow-md transition-shadow">
       <CardHeader>
@@ -34,6 +35,9 @@ export default function ExamCard({ exam }: ExamCardProps) {
           </div>
           <div className="text-sm">
             <span className="font-medium">Subjective:</span> {exam.questions.filter(q => q.type === 'subjective').length}
+          </div>
+          <div className="text-sm">
+            <span className="font-medium">Duration:</span> {duration} minutes
           </div>
           <div className="text-sm">
             <span className="font-medium">Created:</span> {new Date(exam.createdAt).toLocaleDateString()}

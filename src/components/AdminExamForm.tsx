@@ -23,7 +23,7 @@ export default function AdminExamForm({ exam }: AdminExamFormProps) {
     title: exam?.title || '',
     class: exam?.class || '11',
     subject: exam?.subject || '',
-    duration: exam?.duration.toString() || '60',
+    duration: (exam?.duration ?? exam?.durationMinutes ?? 60).toString(),
     division: exam?.division || 'A',
     totalMarks: exam?.totalMarks?.toString() || '100'
   });

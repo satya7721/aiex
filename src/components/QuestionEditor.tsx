@@ -1,7 +1,7 @@
 'use client';
 
-import { Question } from '@/types';
-import { useState } from 'react';
+import { Question, QuestionOption } from '@/types';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,32 +35,59 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
   const isEditing = !!question;
   const [questionType, setQuestionType] = useState<'mcq' | 'subjective'>(question?.type || 'mcq');
   const [questionText, setQuestionText] = useState(question?.text || '');
-  const [options, setOptions] = useState<string[]>(question?.options || ['', '', '', '']);
-  const [correctOption, setCorrectOption] = useState<number>(Number(question?.correctOption) || 0);
+  const defaultOptions: QuestionOption[] = useMemo(() => (
+    Array.from({ length: 4 }).map((_, index) => ({
+      id: `opt-${Date.now()}-${index}`,
+      text: ''
+    }))
+  ), []);
+
+  const initialOptions: QuestionOption[] = useMemo(() => {
+    if (!question?.options || question.options.length === 0) {
+      return defaultOptions;
+    }
+    return question.options.map((opt, index) =>
+      typeof opt === 'string'
+        ? { id: `opt-${index}`, text: opt }
+        : opt
+    );
+  }, [question?.options, defaultOptions]);
+
+  const [options, setOptions] = useState<QuestionOption[]>(initialOptions);
+  const [correctOptionId, setCorrectOptionId] = useState<string>(
+    typeof question?.correctOption === 'string'
+      ? question.correctOption
+      : typeof question?.correctOption === 'number'
+        ? initialOptions[Number(question.correctOption)]?.id || initialOptions[0]?.id
+        : initialOptions[0]?.id
+  );
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...options];
-    newOptions[index] = value;
+    newOptions[index] = { ...newOptions[index], text: value };
     setOptions(newOptions);
   };
 
   const handleAddOption = () => {
-    setOptions([...options, '']);
+    const newOption = { id: `opt-${Date.now()}-${options.length}`, text: '' };
+    setOptions([...options, newOption]);
+    if (!correctOptionId) {
+      setCorrectOptionId(newOption.id);
+    }
   };
 
   const handleRemoveOption = (index: number) => {
     if (options.length <= 2) return; // Need at least 2 options
 
+    const removedOptionId = options[index]?.id;
     const newOptions = options.filter((_, i) => i !== index);
-    setOptions(newOptions);
 
     // Adjust correctOption if needed
-    if (correctOption === index) {
-      setCorrectOption(0);
-    } else if (correctOption > index) {
-      setCorrectOption(correctOption - 1);
+    if (removedOptionId === correctOptionId) {
+      setCorrectOptionId(newOptions[0]?.id || '');
     }
+    setOptions(newOptions);
   };
 
   const handleSave = () => {
@@ -69,10 +96,14 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
       type: questionType,
       text: questionText,
       marks: question?.marks || 10,
-      ...(questionType === 'mcq' && {
-        options,
-        correctOption
-      })
+      ...(questionType === 'mcq'
+        ? {
+            options,
+            correctOption: correctOptionId
+          }
+        : {
+            modelAnswer: question?.modelAnswer
+          })
     };
 
     onSave(newQuestion);
@@ -145,15 +176,15 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
             </div>
 
             {options.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2">
+              <div key={option.id || index} className="flex items-center space-x-2">
                 <Input
                   type="radio"
                   className="w-4 h-4"
-                  checked={correctOption === index}
-                  onChange={() => setCorrectOption(index)}
+                  checked={correctOptionId === option.id}
+                  onChange={() => setCorrectOptionId(option.id)}
                 />
                 <Input
-                  value={option}
+                  value={option.text}
                   onChange={(e) => handleOptionChange(index, e.target.value)}
                   placeholder={`Option ${index + 1}`}
                   className="flex-grow"
@@ -219,7 +250,11 @@ export default function QuestionEditor({ question, onSave, onCancel }: QuestionE
         <Button
           type="button"
           onClick={handleSave}
-          disabled={!questionText || (questionType === 'mcq' && options.some(opt => !opt))}
+          disabled={
+            !questionText ||
+            (questionType === 'mcq' &&
+              (options.some(opt => !opt.text) || !correctOptionId))
+          }
         >
           Save Question
         </Button>

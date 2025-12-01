@@ -29,16 +29,17 @@ export default function ExamForm({ exam }: ExamFormProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [isTimeUp, setIsTimeUp] = useState(false);
+  const durationMinutes = exam.durationMinutes ?? exam.duration;
 
-  const handleMCQAnswer = (questionId: string, optionIndex: number) => {
+  const handleMCQAnswer = (questionId: string, optionId: string) => {
     setAnswers(prev => {
       const existingAnswerIndex = prev.findIndex(a => a.questionId === questionId);
       if (existingAnswerIndex >= 0) {
         const newAnswers = [...prev];
-        newAnswers[existingAnswerIndex] = { questionId, answer: optionIndex };
+        newAnswers[existingAnswerIndex] = { questionId, answer: optionId };
         return newAnswers;
       } else {
-        return [...prev, { questionId, answer: optionIndex }];
+        return [...prev, { questionId, answer: optionId }];
       }
     });
   };
@@ -81,7 +82,7 @@ export default function ExamForm({ exam }: ExamFormProps) {
     <div className="flex flex-col space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{exam.title}</h1>
-        <Timer durationMinutes={exam.duration} onTimeEnd={handleTimeEnd} />
+        <Timer durationMinutes={durationMinutes} onTimeEnd={handleTimeEnd} />
       </div>
 
       <div className="flex justify-between text-sm mb-4">
@@ -94,19 +95,24 @@ export default function ExamForm({ exam }: ExamFormProps) {
 
         {currentQuestion.type === 'mcq' && currentQuestion.options && (
           <div className="space-y-4">
-            {currentQuestion.options.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2">
+            {currentQuestion.options.map((option, index) => {
+              const optionId = typeof option === 'string'
+                ? index.toString()
+                : option.id || index.toString();
+              const optionLabel = typeof option === 'string' ? option : option.text;
+              return (
+              <div key={optionId || index} className="flex items-center space-x-2">
                 <Input
                   type="radio"
                   id={`option-${index}`}
                   name={`question-${currentQuestion.id}`}
                   className="w-4 h-4"
-                  checked={getCurrentAnswer(currentQuestion.id) === index}
-                  onChange={() => handleMCQAnswer(currentQuestion.id, index)}
+                  checked={String(getCurrentAnswer(currentQuestion.id)) === String(optionId)}
+                  onChange={() => handleMCQAnswer(currentQuestion.id, String(optionId))}
                 />
-                <label htmlFor={`option-${index}`} className="flex-grow">{option}</label>
+                <label htmlFor={`option-${index}`} className="flex-grow">{optionLabel}</label>
               </div>
-            ))}
+            )})}
           </div>
         )}
 
