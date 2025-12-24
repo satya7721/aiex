@@ -3,7 +3,7 @@
 ## Completed Work ✅
 
 ### Setup
-- [x] Next.js 14 project with App Router
+- [x] Next.js 16 project with App Router
 - [x] TypeScript configuration
 - [x] Tailwind CSS integration
 - [x] ShadCN UI components
