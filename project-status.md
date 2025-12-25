@@ -55,6 +55,7 @@
 - [x] Mobile-responsive admin dashboard
 - [x] Simplified exam creation form
 - [x] Improved exam listing by batch and division
+- [x] AI-powered Exam Generation (integration with OpenRouter)
 
 ### Mobile Responsiveness
 - [x] Responsive header with mobile menu

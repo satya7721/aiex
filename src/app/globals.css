@@ -75,7 +75,17 @@
   * {
     @apply border-[var(--border)];
   }
+
   body {
     @apply bg-[var(--background)] text-[var(--foreground)];
   }
-} 
+}
+
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

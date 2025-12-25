@@ -1,234 +1,153 @@
 'use client';
 
-import { exams, submissions } from '@/app/data';
-import { Exam } from '@/types';
-import AdminDashboard from '@/components/AdminDashboard';
-import ExamActions from '@/components/ExamActions';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { BarChart3 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+  Calendar,
+  Plus
+} from 'lucide-react';
+import { PageHeader } from '@/components/common/PageHeader';
+import { ExamTimelineCard } from '@/components/common/ExamTimelineCard';
+
+// Mock Data for Timeline View
+const timelineData = [
+  {
+    date: "Today, Feb 12",
+    exams: [
+      {
+        id: "302",
+        className: "Class 302",
+        title: "Math Exam",
+        grade: "Grade 12",
+        status: "Confirmed",
+        participants: 19,
+        color: "indigo",
+        time: "08:00 AM",
+        duration: "1h 30m"
+      },
+      {
+        id: "303",
+        className: "Class 303",
+        title: "Physics Exam",
+        grade: "Grade 10",
+        status: "Confirmed",
+        participants: 18,
+        color: "amber",
+        time: "10:30 AM",
+        duration: "1h 00m"
+      }
+    ]
+  },
+  {
+    date: "Tomorrow, Feb 13",
+    exams: [
+      {
+        id: "304",
+        className: "Class 304",
+        title: "Art Exam",
+        grade: "Grade 9",
+        status: "Confirmed",
+        participants: 20,
+        color: "rose",
+        time: "09:00 AM",
+        duration: "2h 00m"
+      }
+    ]
+  },
+  {
+    date: "Mon, Feb 15",
+    exams: [
+      {
+        id: "305",
+        className: "Class 305",
+        title: "English Exam",
+        grade: "Grade 11",
+        status: "Confirmed",
+        participants: 18,
+        color: "emerald",
+        time: "08:00 AM",
+        duration: "1h 15m"
+      },
+      {
+        id: "302b",
+        className: "Class 302",
+        title: "Advanced Math",
+        grade: "Grade 12",
+        status: "Pending",
+        participants: 19,
+        color: "indigo",
+        time: "02:00 PM",
+        duration: "1h 30m"
+      }
+    ]
+  }
+];
 
 export default function AdminPage() {
-  const [loading, setLoading] = useState(true);
-  const [localExams, setLocalExams] = useState<Exam[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const router = useRouter();
-
-  // Simulate data loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLocalExams(exams);
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleDeleteExam = (examId: string) => {
-    setLocalExams(prevExams => prevExams.filter(exam => exam.id !== examId));
-  };
-
-  const handleDuplicateExam = (exam: Exam) => {
-    const newExam: Exam = {
-      ...exam,
-      id: `exam-${Date.now()}`,
-      title: `${exam.title} (Copy)`,
-      createdAt: new Date().toISOString()
-    };
-
-    setLocalExams(prevExams => [...prevExams, newExam]);
-  };
-
-  const filteredExams = searchTerm
-    ? localExams.filter(exam =>
-      exam.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      exam.subject.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    : localExams;
-
-  const renderExamsTab = () => {
-    if (loading) {
-      return (
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="border rounded-lg p-4 space-y-2">
-              <div className="h-6 bg-muted rounded animate-pulse w-48"></div>
-              <div className="h-4 bg-muted rounded animate-pulse w-32"></div>
-              <div className="flex justify-end">
-                <div className="h-8 bg-muted rounded animate-pulse w-20"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    if (filteredExams.length === 0) {
-      return (
-        <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground mb-4">
-            {searchTerm
-              ? 'No exams found matching your search.'
-              : 'No exams have been created yet.'}
-          </p>
-          {!searchTerm && (
-            <Link href="/admin/exam/new">
-              <Button>Create Your First Exam</Button>
-            </Link>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div className="space-y-4">
-        {filteredExams.map((exam) => (
-          <Card key={exam.id}>
-            <CardHeader className="p-4">
-              <div className="flex justify-between items-start">
-                <div className="mr-2">
-                  <CardTitle className="text-base sm:text-lg break-words pr-2">{exam.title}</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
-                    Class {exam.class} • {exam.subject} • {exam.questions.length} questions
-                  </CardDescription>
-                </div>
-                <ExamActions
-                  exam={exam}
-                  onDelete={handleDeleteExam}
-                  onDuplicate={handleDuplicateExam}
-                />
-              </div>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-    );
-  };
-
-  // Get completed exams with submission counts
-  const completedExams = exams.map(exam => {
-    const examSubmissions = submissions.filter(sub => sub.examId === exam.id);
-    return {
-      ...exam,
-      submissionCount: examSubmissions.length,
-      averageScore: examSubmissions.length > 0
-        ? Math.round(examSubmissions.reduce((acc, sub) => acc + (sub.feedback?.score || 0), 0) / examSubmissions.length)
-        : 0
-    };
-  }).sort((a, b) => b.submissionCount - a.submissionCount);
-
   return (
-    <div className="container max-w-4xl mx-auto py-4 sm:py-8 px-3 sm:px-4">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/" className="grow sm:grow-0">
-            <Button variant="outline" className="w-full sm:w-auto" size="sm" sm-size="default">Back to Home</Button>
+    <div className="space-y-8 max-w-[1000px] mx-auto">
+      {/* Header */}
+      <PageHeader
+        title="Exams Timeline"
+        description="View upcoming exams in a chronological timeline."
+        breadcrumbs={[
+          { label: "Maham", href: "#" },
+          { label: "Exams", active: true }
+        ]}
+        actions={
+          <Link href="/admin/exam/new">
+            <Button className="rounded-full gap-2">
+              <Plus className="h-4 w-4" /> Create Exam
+            </Button>
           </Link>
-          <Link href="/admin/exam/new" className="grow sm:grow-0">
-            <Button className="w-full sm:w-auto" size="sm" sm-size="default">Create New Exam</Button>
-          </Link>
-        </div>
-      </div>
+        }
+      />
 
-      {!loading && (
-        <div className="mb-8">
-          <AdminDashboard exams={localExams} submissions={submissions} />
-        </div>
-      )}
+      {/* Timeline View */}
+      <div className="space-y-8 relative">
+        {/* Continuous vertical line for the timeline */}
+        <div className="absolute left-4 top-4 bottom-4 w-px bg-gray-200" />
 
-      <Tabs defaultValue="exams" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="exams">Exams</TabsTrigger>
-          <TabsTrigger value="submissions">Completed Exams</TabsTrigger>
-        </TabsList>
-        <TabsContent value="exams">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4">
-            <h2 className="text-lg sm:text-xl font-medium">Available Exams</h2>
-            <div className="flex w-full sm:w-auto">
-              <div className="relative flex-1 sm:flex-none">
-                <Input
-                  placeholder="Search exams..."
-                  className="w-full sm:w-[200px]"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                  <button
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
-                    onClick={() => setSearchTerm('')}
-                  >
-                    ✕
-                  </button>
-                )}
+        {timelineData.map((day, dayIndex) => (
+          <div key={dayIndex} className="relative">
+            {/* Date Header */}
+            <div className="flex items-center gap-4 mb-6 relative">
+              <div className="w-8 h-8 rounded-full bg-white border-2 border-primary z-10 flex items-center justify-center shadow-sm">
+                <Calendar className="h-4 w-4 text-primary" />
               </div>
-              <Link href="/admin/exam/new" className="ml-2">
-                <Button size="sm">Add</Button>
-              </Link>
+              <h3 className="font-semibold text-lg text-foreground/80 bg-background/50 backdrop-blur-sm px-2 py-1 rounded-md">
+                {day.date}
+              </h3>
+            </div>
+
+            {/* Exams Lists */}
+            <div className="pl-12 space-y-4">
+              {day.exams.map((exam) => (
+                <ExamTimelineCard
+                  key={exam.id}
+                  id={exam.id}
+                  className={exam.className}
+                  title={exam.title}
+                  grade={exam.grade}
+                  participants={exam.participants}
+                  status={exam.status}
+                  time={exam.time}
+                  duration={exam.duration}
+                  color={exam.color}
+                />
+              ))}
             </div>
           </div>
-          {renderExamsTab()}
-        </TabsContent>
+        ))}
 
-        <TabsContent value="submissions">
-          <h2 className="text-lg sm:text-xl font-medium mb-4">Completed Exams</h2>
-          <Card>
-            <CardHeader className="p-4">
-              <CardTitle className="text-base sm:text-lg">Completed Exams</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-2">
-              <div className="space-y-4">
-                {completedExams.map((exam) => (
-                  <div key={exam.id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-medium">{exam.title}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {exam.subject} - Class {exam.class} Division {exam.division}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold">{exam.averageScore}%</div>
-                        <div className="text-sm text-muted-foreground">{exam.submissionCount} submissions</div>
-                      </div>
-                    </div>
-                    <div className="mt-4 flex justify-end">
-                      <Link href={`/admin/reports/${exam.id}`}>
-                        <Button variant="outline" size="sm" className="flex items-center gap-2">
-                          <BarChart3 className="h-4 w-4" />
-                          View Report
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-                {completedExams.length === 0 && (
-                  <div className="text-center text-muted-foreground py-4">
-                    No completed exams
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        {/* End of Timeline Indicator */}
+        <div className="flex items-center gap-4 relative pl-0.5">
+          <div className="w-8 h-8 rounded-full bg-gray-100 z-10 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-gray-300" />
+          </div>
+          <p className="text-sm text-muted-foreground">End of scheduled exams</p>
+        </div>
+      </div>
     </div>
   );
-} 
+}
