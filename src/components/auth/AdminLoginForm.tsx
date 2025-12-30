@@ -18,14 +18,12 @@ export function AdminLoginForm() {
     setError('');
     setIsLoading(true);
 
-    // Validate email format
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('Please enter a valid email address');
       setIsLoading(false);
       return;
     }
 
-    // Validate password
     if (!password) {
       setError('Please enter your password');
       setIsLoading(false);
@@ -33,11 +31,32 @@ export function AdminLoginForm() {
     }
 
     try {
-      localStorage.setItem('userType', 'admin');
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) throw authError;
+
+      // Check if user is actually an admin
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (userError || userData?.role !== 'admin') {
+        await supabase.auth.signOut();
+        throw new Error('Unauthorized: Admin access only');
+      }
+
       document.cookie = `userType=admin; path=/`;
       router.push('/admin');
-    } catch (err) {
-      setError('Invalid email or password');
+    } catch (err: any) {
+      setError(err.message || 'Invalid email or password');
     } finally {
       setIsLoading(false);
     }
@@ -81,9 +100,9 @@ export function AdminLoginForm() {
           <p className="text-sm text-red-500">{error}</p>
         )}
 
-        <Button 
-          type="submit" 
-          className="w-full bg-gray-900 text-white hover:bg-gray-800" 
+        <Button
+          type="submit"
+          className="w-full bg-gray-900 text-white hover:bg-gray-800"
           disabled={isLoading}
         >
           {isLoading ? 'Signing in...' : 'Sign in'}

@@ -110,6 +110,46 @@ export const users: User[] = [
     email: "admin@example.com",
     type: "admin",
   },
+  {
+    id: "user-3",
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    type: "student",
+    class: "12",
+    division: "A",
+  },
+  {
+    id: "user-4",
+    name: "Bob Brown",
+    email: "bob@example.com",
+    type: "student",
+    class: "12",
+    division: "B",
+  },
+  {
+    id: "user-5",
+    name: "Charlie Davis",
+    email: "charlie@example.com",
+    type: "student",
+    class: "10",
+    division: "A",
+  },
+  {
+    id: "user-6",
+    name: "Diana Evans",
+    email: "diana@example.com",
+    type: "student",
+    class: "10",
+    division: "A",
+  },
+  {
+    id: "user-7",
+    name: "Evan Fisher",
+    email: "evan@example.com",
+    type: "student",
+    class: "11",
+    division: "C",
+  },
 ];
 
 // Dummy Submission Data

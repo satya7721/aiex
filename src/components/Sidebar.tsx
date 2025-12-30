@@ -11,7 +11,8 @@ import {
     Clock,
     Users,
     Settings,
-    Hexagon
+    Hexagon,
+    LogOut
 } from "lucide-react";
 
 interface SidebarItem {
