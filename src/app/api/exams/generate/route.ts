@@ -20,7 +20,7 @@ type GenerateExamRequest = {
 
 /* -------------------- OpenRouter -------------------- */
 const openrouter = new OpenRouter({
-    apiKey: "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",
+    apiKey: process.env.OPENROUTER_API_KEY,
 });
 
 /* -------------------- Utils -------------------- */
