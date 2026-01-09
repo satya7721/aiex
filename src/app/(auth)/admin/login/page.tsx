@@ -1,14 +1,9 @@
-import LoginForm from '@/components/auth/LoginForm';
+import { AdminLoginForm } from '@/components/auth/AdminLoginForm';
 
 export default function AdminLoginPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/10">
-      <div className="w-full">
-        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-8">
-          AI Enhanced Examination Platform
-        </h1>
-        <LoginForm userType="admin" />
-      </div>
-    </div>
-  );
-} 
+    return (
+        <div className="min-h-screen flex items-center justify-center p-4">
+            <AdminLoginForm />
+        </div>
+    );
+}
